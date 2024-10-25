@@ -1,6 +1,6 @@
-const body = require("express-validator");
+const { body } = require("express-validator");
 
-const prisma = require("../../prisma/folder");
+const prisma = require("../../prisma/client");
 
 const validateUser = [
   body("name").notEmpty().withMessage("name is required"),
@@ -28,4 +28,4 @@ const validateUser = [
     .isLength({ min: 6 })
     .withMessage("password must be at least 6 characters long"),
 ];
-module.exports = validateUser;
+module.exports = { validateUser };

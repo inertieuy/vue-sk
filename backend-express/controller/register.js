@@ -24,6 +24,11 @@ const register = async (req, res) => {
         password: hashedPassword,
       },
     });
+    res.status(201).send({
+      success: true,
+      message: "Register successfully",
+      data: user,
+    });
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -31,4 +36,4 @@ const register = async (req, res) => {
     });
   }
 };
-module.exports = register;
+module.exports = { register };

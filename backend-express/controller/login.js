@@ -1,4 +1,3 @@
-
 const { validationResult } = require("express-validator");
 
 const prisma = require("../prisma/client");
@@ -71,4 +70,4 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = login;
+module.exports = { login };
