@@ -1,9 +1,19 @@
-const prisma = require("../prisma/prisma");
+//import express
+const express = require("express");
+
+//import prisma client
+const prisma = require("../prisma/client");
+
+// Import validationResult from express-validator
 const { validationResult } = require("express-validator");
+
+//import bcrypt
 const bcrypt = require("bcryptjs");
 
+//function findUsers
 const findUsers = async (req, res) => {
   try {
+    //get all users from database
     const users = await prisma.user.findMany({
       select: {
         id: true,
@@ -15,23 +25,27 @@ const findUsers = async (req, res) => {
       },
     });
 
+    //send response
     res.status(200).send({
       success: true,
-      message: "all User found",
+      message: "Get all users successfully",
       data: users,
     });
-  } catch (e) {
+  } catch (error) {
     res.status(500).send({
       success: false,
-      message: "intetrnal server eror",
+      message: "Internal server error",
     });
   }
 };
 
+//function createUser
 const createUser = async (req, res) => {
+  // Periksa hasil validasi
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
+    // Jika ada error, kembalikan error ke pengguna
     return res.status(422).json({
       success: false,
       message: "Validation error",
@@ -39,9 +53,11 @@ const createUser = async (req, res) => {
     });
   }
 
+  //hash password
   const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
   try {
+    //insert data
     const user = await prisma.user.create({
       data: {
         name: req.body.name,
@@ -63,10 +79,13 @@ const createUser = async (req, res) => {
   }
 };
 
+//function findUserById
 const findUserById = async (req, res) => {
+  //get ID from params
   const { id } = req.params;
 
   try {
+    //get user by ID
     const user = await prisma.user.findUnique({
       where: {
         id: Number(id),
@@ -78,6 +97,7 @@ const findUserById = async (req, res) => {
       },
     });
 
+    //send response
     res.status(200).send({
       success: true,
       message: `Get user By ID :${id}`,
@@ -91,12 +111,16 @@ const findUserById = async (req, res) => {
   }
 };
 
+//function updateUser
 const updateUser = async (req, res) => {
+  //get ID from params
   const { id } = req.params;
 
+  // Periksa hasil validasi
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
+    // Jika ada error, kembalikan error ke pengguna
     return res.status(422).json({
       success: false,
       message: "Validation error",
@@ -104,9 +128,11 @@ const updateUser = async (req, res) => {
     });
   }
 
+  //hash password
   const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
   try {
+    //update user
     const user = await prisma.user.update({
       where: {
         id: Number(id),
@@ -118,6 +144,7 @@ const updateUser = async (req, res) => {
       },
     });
 
+    //send response
     res.status(200).send({
       success: true,
       message: "User updated successfully",
@@ -131,16 +158,20 @@ const updateUser = async (req, res) => {
   }
 };
 
+//function deleteUser
 const deleteUser = async (req, res) => {
+  //get ID from params
   const { id } = req.params;
 
   try {
+    //delete user
     await prisma.user.delete({
       where: {
         id: Number(id),
       },
     });
 
+    //send response
     res.status(200).send({
       success: true,
       message: "User deleted successfully",
